@@ -1,0 +1,173 @@
+<html>
+    <head>
+        <style>
+            body {
+                background-color: #090909;
+                margin: 0;
+                font-family: Arial, sans-serif;
+            }
+
+            /* Container for price cards */
+            .price-card-container {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr); /* 2 columns */
+                gap: 20px; /* Space between cards */
+                justify-content: center;
+                padding: 20px;
+            }
+
+            .price-card {
+                width: 90%;
+                padding: 20px;
+                border-radius: 20px;
+                background-color: #1c1c1e;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                font-family: Arial, sans-serif;
+                margin: 0; /* No need for individual margins when using grid */
+            }
+
+            .currency-info {
+                display: flex;
+                align-items: center;
+            }
+
+            .flag {
+                width: 60px;
+                height: auto;
+                margin-right: 10px;
+                border-radius: 50%;
+            }
+
+            .currency-name {
+                font-size: 12px;
+                color: gray;
+                margin-right: auto;
+            }
+
+            .currency-code {
+                font-size: 38px;
+                font-weight: bold;
+                color: #f4f4f6;
+            }
+
+            .currency-code2 {
+                font-size: 38px;
+                font-weight: bold;
+                color: gray;
+            }
+
+            .prices {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .price-small {
+                font-size: 40px;
+                color: gray;
+            }
+
+            .price-large {
+                font-size: 70px;
+                font-weight: bold;
+                color: red;
+            }
+
+            .header-div {
+                width: 100%;
+                height: 300px;
+                font-size: 50px;
+                color: white;
+                padding-left: 20px;
+            }
+
+            
+
+        </style>
+    </head>
+
+    <body>
+        
+        <div class="header-div">
+            <h1 style="position: relative; top: 35%;">chande ?!</h1>
+        </div>
+
+        <div class="price-card-container">
+            <div class="price-card">
+                <div class="currency-info">
+                    <img src="https://cdn-icons-png.freepik.com/512/551/551953.png" alt="Flag" class="flag">
+                    <div class="currency-name"></div>
+                    <div class="currency-code2">US Dollar</div>
+                </div>
+                <div class="currency-info">
+                    <div class="currency-name"></div>
+                    <div class="currency-code">USD</div>
+                </div>
+                <br>
+                <br>
+                <br>
+                <div class="prices">
+                    <div class="price-small">26,800</div>
+                    <div class="price-large">26,900</div>
+                </div>
+            </div>
+
+            <div class="price-card">
+                <div class="currency-info">
+                    <img src="https://cdn-icons-png.freepik.com/512/551/551953.png" alt="Flag" class="flag">
+                    <div class="currency-name"></div>
+                    <div class="currency-code2">US Dollar</div>
+                </div>
+                <div class="currency-info">
+                    <div class="currency-name"></div>
+                    <div class="currency-code">USD</div>
+                </div>
+                <br>
+                <br>
+                <br>
+                <div class="prices">
+                    <div class="price-small">26,800</div>
+                    <div class="price-large">26,900</div>
+                </div>
+            </div>
+
+            <div class="price-card">
+                <div class="currency-info">
+                    <img src="https://cdn-icons-png.freepik.com/512/551/551953.png" alt="Flag" class="flag">
+                    <div class="currency-name"></div>
+                    <div class="currency-code2">US Dollar</div>
+                </div>
+                <div class="currency-info">
+                    <div class="currency-name"></div>
+                    <div class="currency-code">USD</div>
+                </div>
+                <br>
+                <br>
+                <br>
+                <div class="prices">
+                    <div class="price-small">26,800</div>
+                    <div class="price-large">26,900</div>
+                </div>
+            </div>
+
+            <div class="price-card">
+                <div class="currency-info">
+                    <img src="https://cdn-icons-png.freepik.com/512/551/551953.png" alt="Flag" class="flag">
+                    <div class="currency-name"></div>
+                    <div class="currency-code2">US Dollar</div>
+                </div>
+                <div class="currency-info">
+                    <div class="currency-name"></div>
+                    <div class="currency-code">USD</div>
+                </div>
+                <br>
+                <br>
+                <br>
+                <div class="prices">
+                    <div class="price-small">26,800</div>
+                    <div class="price-large">26,900</div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
