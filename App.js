@@ -85,7 +85,7 @@ const CurrencyApp = () => {
 
   const fetchCurrPrice = async () => {
     try {
-      const response = await fetch('http://first.irandaneshkade.ir:8000/api/currency/');
+      const response = await fetch('https://api.amirazade.ir/api/currency/');
       const data = await response.json();
       setPrices({
         usd: data.usd1,
@@ -420,3 +420,5 @@ const styles = StyleSheet.create({
 });
 
 export default CurrencyApp;
+
+// https://expo.dev/accounts/amirmoaz26/projects/androChand/builds/ccba929b-2923-4b84-8eca-a5bd0852228f
