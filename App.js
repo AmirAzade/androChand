@@ -1,46 +1,89 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Image, Dimensions, ActivityIndicator } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import * as Font from 'expo-font';
+import { StatusBar } from 'expo-status-bar';
+// import * as Font from 'expo-font';
+// import { useFonts } from 'expo-font';
+
+export const currencyData = {
+  usd: { flag: require('./assets/flags/us.png'), name: "US Dollar" },
+  eur: { flag: require('./assets/flags/eu.png'), name: "Euro" },
+  gbp: { flag: require('./assets/flags/gb.png'), name: "British Pound" },
+  chf: { flag: require('./assets/flags/ch.png'), name: "Swiss Franc" },
+  cad: { flag: require('./assets/flags/ca.png'), name: "Canadian Dollar" },
+  aud: { flag: require('./assets/flags/au.png'), name: "Australian Dollar" },
+  sek: { flag: require('./assets/flags/se.png'), name: "Swedish Krona" },
+  nok: { flag: require('./assets/flags/no.png'), name: "Norwegian Krone" },
+  rub: { flag: require('./assets/flags/ru.png'), name: "Russian Ruble" },
+  thb: { flag: require('./assets/flags/th.png'), name: "Thai Baht" },
+  sgd: { flag: require('./assets/flags/sg.png'), name: "Singapore Dollar" },
+  hkd: { flag: require('./assets/flags/hk.png'), name: "Hong Kong Dollar" },
+  azn: { flag: require('./assets/flags/az.png'), name: "Azerbaijani Manat" },
+  amd: { flag: require('./assets/flags/am.png'), name: "Armenian Dram" },
+  dkk: { flag: require('./assets/flags/dk.png'), name: "Danish Krone" },
+  aed: { flag: require('./assets/flags/ae.png'), name: "UAE Dirham" },
+  jpy: { flag: require('./assets/flags/jp.png'), name: "Japanese Yen" },
+  try: { flag: require('./assets/flags/tr.png'), name: "Turkish Lira" },
+  cny: { flag: require('./assets/flags/cn.png'), name: "Chinese Yuan" },
+  sar: { flag: require('./assets/flags/sa.png'), name: "Saudi Riyal" },
+  inr: { flag: require('./assets/flags/in.png'), name: "Indian Rupee" },
+  myr: { flag: require('./assets/flags/my.png'), name: "Malaysian Ringgit" },
+  afn: { flag: require('./assets/flags/af.png'), name: "Afghan Afghani" },
+  kwd: { flag: require('./assets/flags/kw.png'), name: "Kuwaiti Dinar" },
+  bhd: { flag: require('./assets/flags/bh.png'), name: "Bahraini Dinar" },
+  omr: { flag: require('./assets/flags/om.png'), name: "Omani Rial" },
+  qar: { flag: require('./assets/flags/qa.png'), name: "Qatari Riyal" },
+  
+  emm: { flag: require('./assets/flags/emm.png'), name: "Emami" },
+  azd: { flag: require('./assets/flags/azd.png'), name: "Azadi" },
+  nim: { flag: require('./assets/flags/nim.png'), name: "½ Azadi" },
+  rob: { flag: require('./assets/flags/rob.png'), name: "¼ Azadi" },
+  grmi: { flag: require('./assets/flags/grm.png'), name: "Gerami" },
+  
+  grm: { flag: require('./assets/flags/gram.png'), name: "Gold Gram" },
+  mql: { flag: require('./assets/flags/mithqal.png'), name: "Mithqal" },
+  oz: { flag: require('./assets/flags/ounce.png'), name: "Ounce" },
+};
+
 
 export const flagImages = {
-  us: require('./assets/flags/us.png'),
-  eu: require('./assets/flags/eu.png'),
-  gb: require('./assets/flags/gb.png'),
-  ch: require('./assets/flags/ch.png'),
-  ca: require('./assets/flags/ca.png'),
-  au: require('./assets/flags/au.png'),
-  se: require('./assets/flags/se.png'),
-  no: require('./assets/flags/no.png'),
-  ru: require('./assets/flags/ru.png'),
-  th: require('./assets/flags/th.png'),
-  sg: require('./assets/flags/sg.png'),
-  hk: require('./assets/flags/hk.png'),
-  az: require('./assets/flags/az.png'),
-  am: require('./assets/flags/am.png'),
-  dk: require('./assets/flags/dk.png'),
-  ae: require('./assets/flags/ae.png'),
-  jp: require('./assets/flags/jp.png'),
-  tr: require('./assets/flags/tr.png'),
-  cn: require('./assets/flags/cn.png'),
-  sa: require('./assets/flags/sa.png'),
-  in: require('./assets/flags/in.png'),
-  my: require('./assets/flags/my.png'),
-  af: require('./assets/flags/af.png'),
-  kw: require('./assets/flags/kw.png'),
-  bh: require('./assets/flags/bh.png'),
-  om: require('./assets/flags/om.png'),
-  qa: require('./assets/flags/qa.png'),
+  usd: require('./assets/flags/us.png'),
+  eur: require('./assets/flags/eu.png'),
+  gbp: require('./assets/flags/gb.png'),
+  chf: require('./assets/flags/ch.png'),
+  cad: require('./assets/flags/ca.png'),
+  aud: require('./assets/flags/au.png'),
+  sek: require('./assets/flags/se.png'),
+  nok: require('./assets/flags/no.png'),
+  rub: require('./assets/flags/ru.png'),
+  thb: require('./assets/flags/th.png'),
+  sgd: require('./assets/flags/sg.png'),
+  hkd: require('./assets/flags/hk.png'),
+  azn: require('./assets/flags/az.png'),
+  amd: require('./assets/flags/am.png'),
+  dkk: require('./assets/flags/dk.png'),
+  aed: require('./assets/flags/ae.png'),
+  jpy: require('./assets/flags/jp.png'),
+  try: require('./assets/flags/tr.png'),
+  cny: require('./assets/flags/cn.png'),
+  sar: require('./assets/flags/sa.png'),
+  inr: require('./assets/flags/in.png'),
+  myr: require('./assets/flags/my.png'),
+  afn: require('./assets/flags/af.png'),
+  kwd: require('./assets/flags/kw.png'),
+  bhd: require('./assets/flags/bh.png'),
+  omr: require('./assets/flags/om.png'),
+  qaq: require('./assets/flags/qa.png'),
 
   azd: require('./assets/flags/azd.png'),
   emm: require('./assets/flags/emm.png'),
   nim: require('./assets/flags/nim.png'),
   rob: require('./assets/flags/rob.png'),
-  grm: require('./assets/flags/grm.png'),
+  grmi: require('./assets/flags/grm.png'),
 
-  gram: require('./assets/flags/gram.png'),
-  mithqal: require('./assets/flags/mithqal.png'),
-  ounce: require('./assets/flags/ounce.png'),
+  grm: require('./assets/flags/gram.png'),
+  mql: require('./assets/flags/mithqal.png'),
+  oz: require('./assets/flags/ounce.png'),
 
 };
 
@@ -60,20 +103,11 @@ const formatPrice = (price) => {
   }
 };
 
-const CurrencyCard = ({ flag, name, symbol, value, change }) => (
-  <View style={styles.card}>
-    <Image source={flagImages[flag]} style={styles.flag} />
-    {/* <Text style={styles.flag}>{flag}</Text> */}
-    <Text style={styles.name}>{name}</Text>
-    <Text style={styles.symbol}>{symbol}</Text>
-    <Text style={styles.value}>{value}</Text>
-    <Text style={[styles.change, change > 0 ? styles.positive : styles.negative]}>
-      {change > 0 ? `↑${change}` : `↓${-change}`}
-    </Text>
-  </View>
-);
+
 
 const CurrencyApp = () => {
+  
+
   const [prices, setPrices] = useState({});
   const [activeTab, setActiveTab] = useState(0);
   const [amount, setAmount] = useState('');
@@ -82,6 +116,9 @@ const CurrencyApp = () => {
   const [conversionResult, setConversionResult] = useState(null);
   const [resultAmount, setResultAmount] = useState('');
 
+  // const [fontsLoaded] = useFonts({
+  //   'kir': require('./assets/fonts/SF-Pro.ttf'),
+  // });
 
   const fetchCurrPrice = async () => {
     try {
@@ -89,45 +126,76 @@ const CurrencyApp = () => {
       const data = await response.json();
       setPrices({
         usd: data.usd1,
+        usd_change: data.usd3,
         eur: data.eur1,
+        eur_change: data.eur3,
         gbp: data.gbp1,
+        gbp_change: data.gbp3,
         chf: data.chf1,
+        chf_change: data.chf3,
         cad: data.cad1,
+        cad_change: data.cad3,
         aud: data.aud1,
+        aud_change: data.aud3,
         sek: data.sek1,
+        sek_change: data.sek3,
         nok: data.nok1,
+        nok_change: data.nok3,
         rub: data.rub1,
+        rub_change: data.rub3,
         thb: data.thb1,
+        thb_change: data.thb3,
         sgd: data.sgd1,
+        sgd_change: data.sgd3,
         hkd: data.hkd1,
+        hkd_change: data.hkd3,
         azn: data.azn1,
+        azn_change: data.azn3,
         amd: data.amd1,
+        amd_change: data.amd3,
         dkk: data.dkk1,
+        dkk_change: data.dkk3,
         aed: data.aed1,
+        aed_change: data.aed3,
         jpy: data.jpy1,
+        jpy_change: data.jpy3,
         try: data.try1,
+        try_change: data.try3,
         cny: data.cny1,
+        cny_change: data.cny3,
         sar: data.sar1,
+        sar_change: data.sar3,
         inr: data.inr1,
+        inr_change: data.inr3,
         myr: data.myr1,
+        myr_change: data.myr3,
         afn: data.afn1,
+        afn_change: data.afn3,
         kwd: data.kwd1,
+        kwd_change: data.kwd3,
         bhd: data.bhd1,
+        bhd_change: data.bhd3,
         omr: data.omr1,
+        omr_change: data.omr3,
         qar: data.qar1,
+        qar_change: data.qar3,
 
-        emami: data.emami1,
-        azadi: data.azadi1,
+        emm: data.emami1,
+        emm_change: data.emami13,
+        azd: data.azadi1,
+        azd_change: data.azadi13,
         nim: data.azadi1_2,
+        nim_change: data.azadi1_22,
         rob: data.azadi1_4,
-        gerami: data.azadi1g,
+        rob_change: data.azadi1_42,
+        grmi: data.azadi1g,
+        grmi_change: data.azadi1g3,
 
         grm: data.gol18,
         mql: data.mithqal,
-        oz: data.ounce,
-
-
+        oz: data.ounce
       });
+
     } catch (error) {
       console.error('Error fetching currency prices:', error);
     }
@@ -161,61 +229,61 @@ const CurrencyApp = () => {
       case 0:
         return (
           <>
-            <CurrencyCard flag="us" name="US Dollar" symbol="USD" value={formatPrice(prices.usd)} change={50} />
-            <CurrencyCard flag="eu" name="Euro" symbol="EUR" value={formatPrice(prices.eur)} change={5} />
-            <CurrencyCard flag="gb" name="British Pound" symbol="GBP" value={formatPrice(prices.gbp)} change={185} />
-            <CurrencyCard flag="ch" name="Swiss Franc" symbol="CHF" value={formatPrice(prices.chf)} change={10} />
-            <CurrencyCard flag="ca" name="Canadian Dollar" symbol="CAD" value={formatPrice(prices.cad)} change={15} />
-            <CurrencyCard flag="au" name="Australian Dollar" symbol="AUD" value={formatPrice(prices.aud)} change={10} />
+            <CurrencyCard symbol="USD" prices = {prices} />
+            <CurrencyCard symbol="EUR" prices = {prices} />
+            <CurrencyCard symbol="GBP" prices = {prices} />
+            <CurrencyCard symbol="CHF" prices = {prices} />
+            <CurrencyCard symbol="CAD" prices = {prices} />
+            <CurrencyCard symbol="AUD" prices = {prices} />
           </>
         );
       case 1:
         return (
           <>
-            <CurrencyCard flag="us" name="US Dollar" symbol="USD" value={formatPrice(prices.usd)} change={50} />
-            <CurrencyCard flag="eu" name="Euro" symbol="EUR" value={formatPrice(prices.eur)} change={5} />
-            <CurrencyCard flag="gb" name="British Pound" symbol="GBP" value={formatPrice(prices.gbp)} change={185} />
-            <CurrencyCard flag="ch" name="Swiss Franc" symbol="CHF" value={formatPrice(prices.chf)} change={10} />
-            <CurrencyCard flag="ca" name="Canadian Dollar" symbol="CAD" value={formatPrice(prices.cad)} change={15} />
-            <CurrencyCard flag="au" name="Australian Dollar" symbol="AUD" value={formatPrice(prices.aud)} change={10} />
-            <CurrencyCard flag="se" name="Swedish Krona" symbol="SEK" value={formatPrice(prices.sek)} change={5} />
-            <CurrencyCard flag="no" name="Norwegian Krone" symbol="NOK" value={formatPrice(prices.nok)} change={12} />
-            <CurrencyCard flag="ru" name="Russian Ruble" symbol="RUB" value={formatPrice(prices.rub)} change={-2} />
-            <CurrencyCard flag="th" name="Thai Baht" symbol="THB" value={formatPrice(prices.thb)} change={3} />
-            <CurrencyCard flag="sg" name="Singapore Dollar" symbol="SGD" value={formatPrice(prices.sgd)} change={4} />
-            <CurrencyCard flag="hk" name="Hong Kong Dollar" symbol="HKD" value={formatPrice(prices.hkd)} change={2} />
-            <CurrencyCard flag="az" name="Azerbaijani Manat" symbol="AZN" value={formatPrice(prices.azn)} change={1} />
-            <CurrencyCard flag="am" name="Armenian Dram" symbol="AMD" value={formatPrice(prices.amd)} change={8} />
-            <CurrencyCard flag="dk" name="Danish Krone" symbol="DKK" value={formatPrice(prices.dkk)} change={5} />
-            <CurrencyCard flag="ae" name="UAE Dirham" symbol="AED" value={formatPrice(prices.aed)} change={7} />
-            <CurrencyCard flag="jp" name="Japanese Yen" symbol="JPY" value={formatPrice(prices.jpy)} change={-20} />
-            <CurrencyCard flag="tr" name="Turkish Lira" symbol="TRY" value={formatPrice(prices.try)} change={-10} />
-            <CurrencyCard flag="cn" name="Chinese Yuan" symbol="CNY" value={formatPrice(prices.cny)} change={15} />
-            <CurrencyCard flag="sa" name="Saudi Riyal" symbol="SAR" value={formatPrice(prices.sar)} change={4} />
-            <CurrencyCard flag="in" name="Indian Rupee" symbol="INR" value={formatPrice(prices.inr)} change={6} />
-            <CurrencyCard flag="my" name="Malaysian Ringgit" symbol="MYR" value={formatPrice(prices.myr)} change={2} />
-            <CurrencyCard flag="af" name="Afghan Afghani" symbol="AFN" value={formatPrice(prices.afn)} change={3} />
-            <CurrencyCard flag="kw" name="Kuwaiti Dinar" symbol="KWD" value={formatPrice(prices.kwd)} change={1} />
-            <CurrencyCard flag="bh" name="Bahraini Dinar" symbol="BHD" value={formatPrice(prices.bhd)} change={1} />
-            <CurrencyCard flag="om" name="Omani Rial" symbol="OMR" value={formatPrice(prices.omr)} change={1} />
-            <CurrencyCard flag="qa" name="Qatari Riyal" symbol="QAR" value={formatPrice(prices.qar)} change={3} />
+            <CurrencyCard symbol="USD" prices={prices} />
+            <CurrencyCard symbol="EUR" prices={prices} />
+            <CurrencyCard symbol="GBP" prices={prices} />
+            <CurrencyCard symbol="CHF" prices={prices} />
+            <CurrencyCard symbol="CAD" prices={prices} />
+            <CurrencyCard symbol="AUD" prices={prices} />
+            <CurrencyCard symbol="SEK" prices={prices} />
+            <CurrencyCard symbol="NOK" prices={prices} />
+            <CurrencyCard symbol="RUB" prices={prices} />
+            <CurrencyCard symbol="THB" prices={prices} />
+            <CurrencyCard symbol="SGD" prices={prices} />
+            <CurrencyCard symbol="HKD" prices={prices} />
+            <CurrencyCard symbol="AZN" prices={prices} />
+            <CurrencyCard symbol="AMD" prices={prices} />
+            <CurrencyCard symbol="DKK" prices={prices} />
+            <CurrencyCard symbol="AED" prices={prices} />
+            <CurrencyCard symbol="JPY" prices={prices} />
+            <CurrencyCard symbol="TRY" prices={prices} />
+            <CurrencyCard symbol="CNY" prices={prices} />
+            <CurrencyCard symbol="SAR" prices={prices} />
+            <CurrencyCard symbol="INR" prices={prices} />
+            <CurrencyCard symbol="MYR" prices={prices} />
+            <CurrencyCard symbol="AFN" prices={prices} />
+            <CurrencyCard symbol="KWD" prices={prices} />
+            <CurrencyCard symbol="BHD" prices={prices} />
+            <CurrencyCard symbol="OMR" prices={prices} />
+            <CurrencyCard symbol="QAR" prices={prices} />
           </>
         );
       case 2:
         return (
           <>
-            <CurrencyCard flag="emm" name="Emami" symbol="EMM" value={formatPrice(prices.emami)} change={-2} />
-            <CurrencyCard flag="azd" name="Azadi" symbol="AZD" value={formatPrice(prices.azadi)} change={3} />
-            <CurrencyCard flag="nim" name="½ Azadi" symbol="NIM" value={formatPrice(prices.nim)} change={4} />
-            <CurrencyCard flag="rob" name="¼ Azadi" symbol="ROB" value={formatPrice(prices.rob)} change={2} />
-            <CurrencyCard flag="grm" name="Gerami" symbol="GRMI" value={formatPrice(prices.gerami)} change={2} />
-
-            <CurrencyCard flag="gram" name="Gram" symbol="GRM" value={formatPrice(prices.grm)} change={2} />
-            <CurrencyCard flag="ounce" name="Ounce" symbol="OZ" value={formatPrice(prices.oz) + " $"} change={2} />
-            <CurrencyCard flag="mithqal" name="Mithqal" symbol="MQL" value={formatPrice(prices.mql)} change={2} />
-
+            <CurrencyCard symbol="EMM" prices={prices}/>
+            <CurrencyCard symbol="AZD" prices={prices}/>
+            <CurrencyCard symbol="NIM" prices={prices}/>
+            <CurrencyCard symbol="ROB" prices={prices}/>
+            <CurrencyCard symbol="GRMI" prices={prices}/>
+            
+            <CurrencyCard symbol="GRM" prices={prices}/>
+            <CurrencyCard symbol="OZ" prices={prices}/>
+            <CurrencyCard symbol="MQL" prices={prices}/>
           </>
         );
+
 
       case 3:
         return (
@@ -268,8 +336,12 @@ const CurrencyApp = () => {
     }
   };
 
+  
+
   return (
+    // <View style={[styles.container,{ fontFamily: 'CustomFont', fontSize: 24 }]}>
     <View style={styles.container}>
+      <StatusBar barStyle="dark-content" backgroundColor='transparent'></StatusBar>
       <Text style={styles.title}>Chand?!</Text>
       <View style={styles.tabBar}>
         {['Favorites', 'Currency', 'Golds', 'Convertor'].map((tab, index) => (
@@ -288,6 +360,43 @@ const CurrencyApp = () => {
     </View>
   );
 };
+
+const CurrencyCard = ({ symbol, prices }) => {
+  const value = (prices[symbol.toLowerCase()]);
+  const change = (prices[`${symbol.toLowerCase()}_change`]);
+
+  return (
+    <View style={styles.card}>
+      <View style={styles.flagContainer}>
+        <Image source={currencyData[symbol.toLowerCase()].flag} style={styles.flag} />
+        <View style={styles.nameSymbolContainer}>
+          <Text style={styles.name}>{currencyData[symbol.toLowerCase()].name}</Text>
+          <Text style={styles.symbol}>{symbol}</Text>
+        </View>
+      </View>
+      {/* <Image source={currencyData[symbol.toLowerCase()].flag} style={styles.flag} /> */}
+      {/* <Text style={styles.name}>{currencyData[symbol.toLowerCase()].name}</Text> */}
+      {/* <Text style={styles.symbol}>{symbol}</Text> */}
+
+      <Text style={[ styles.break_line ]} > {"\n"} </Text>
+      
+      {!isNaN(change) && (
+        <Text 
+          style={[
+            styles.change,
+            change == 0 ? styles.noChange : change > 0 ? styles.positive : styles.negative
+          ]}
+        >
+          {change == 0 ? '0' : (change > 0 ? `↑${formatPrice(change)}` : `↓${formatPrice(-change)}`)}
+        </Text>
+      )}
+      {formatPrice(value) === "Loading..." ? <Text style={styles.loading_value}>{formatPrice(value)}</Text> : <Text style={styles.value}>{formatPrice(value)}</Text>}
+      
+    </View>
+  );
+};
+
+const screenWidth = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
   container: {
@@ -326,17 +435,33 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   card: {
-    backgroundColor: '#333',
+    backgroundColor: '#212124',
     width: '48%',
+    height: screenWidth * 0.43,
     padding: 15,
     borderRadius: 15,
     marginBottom: 20,
   },
-  flag: {
-    width:30,
-    height:30,
-    borderRadius: 100,
+  // card2: {
+  //   backgroundColor: '#1c1c1e',
+  //   width: '48%',
+  //   padding: 15,
+  //   borderRadius: 15,
+  //   marginBottom: 20,
+  // },
+  flagContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 10,
+  },
+  flag: {
+    width: 30,
+    height: 30,
+    borderRadius: 100,
+    marginRight: 10,
+  },
+  nameSymbolContainer: {
+    justifyContent: 'center',
   },
   name: {
     color: '#bbb',
@@ -349,6 +474,12 @@ const styles = StyleSheet.create({
   },
   value: {
     color: '#fff',
+    fontSize: 25,
+    fontWeight: 'bold',
+    marginVertical: 5,
+  },
+  loading_value: {
+    color: '#bfbfbf',
     fontSize: 22,
     fontWeight: 'bold',
     marginVertical: 5,
@@ -357,11 +488,17 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: 'bold',
   },
+  break_line: {
+    fontSize: 7,
+  },
   positive: {
     color: '#4caf50',
   },
   negative: {
     color: '#f44336',
+  },
+  noChange: {
+    color: '#bfbfbf',
   },
   
   label: {
