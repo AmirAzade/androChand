@@ -364,7 +364,6 @@ const CurrencyApp = () => {
 const CurrencyCard = ({ symbol, prices }) => {
   const value = (prices[symbol.toLowerCase()]);
   const change = (prices[`${symbol.toLowerCase()}_change`]);
-
   return (
     <View style={styles.card}>
       <View style={styles.flagContainer}>
@@ -384,11 +383,11 @@ const CurrencyCard = ({ symbol, prices }) => {
         <Text
           style={[
             styles.change,
-            change === 0 ? styles.noChange : change > 0 ? styles.positive : styles.negative
+            change == 0 ? styles.noChange : change > 0 ? styles.positive : styles.negative
           ]}
         >
-          {change === 0
-            ? '0'
+          {change == 0
+            ? '0% (0)'
             : change > 0
             ? `↑${((change / (value - change)) * 100).toFixed(2)}% (${formatPrice(change)})`
             : `↓${((-change / (value - change)) * 100).toFixed(2)}% (${formatPrice(-change)})`}
@@ -417,7 +416,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#000',
-    paddingHorizontal: 20,
+    paddingHorizontal: 15,
     paddingTop: 50,
   },
   title: {
@@ -429,11 +428,11 @@ const styles = StyleSheet.create({
   tabBar: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginBottom: 20,
+    marginBottom: 2,
   },
   tabButton: {
     paddingVertical: 10,
-    paddingHorizontal: 15,
+    paddingHorizontal: 8,
   },
   activeTab: {
     borderBottomWidth: 2,
@@ -448,6 +447,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
+    marginTop: 20,
   },
   card: {
     backgroundColor: '#212124',
