@@ -185,9 +185,9 @@ const CurrencyApp = () => {
         azd: data.azadi1,
         azd_change: data.azadi13,
         nim: data.azadi1_2,
-        nim_change: data.azadi1_22,
+        nim_change: data.azadi1_23,
         rob: data.azadi1_4,
-        rob_change: data.azadi1_42,
+        rob_change: data.azadi1_43,
         grmi: data.azadi1g,
         grmi_change: data.azadi1g3,
 
@@ -380,17 +380,32 @@ const CurrencyCard = ({ symbol, prices }) => {
 
       <Text style={[ styles.break_line ]} > {"\n"} </Text>
       
-      {!isNaN(change) && (
-        <Text 
+      {!isNaN(change) ? (
+        <Text
           style={[
             styles.change,
-            change == 0 ? styles.noChange : change > 0 ? styles.positive : styles.negative
+            change === 0 ? styles.noChange : change > 0 ? styles.positive : styles.negative
           ]}
         >
-          {change == 0 ? '0' : (change > 0 ? `↑${formatPrice(change)}` : `↓${formatPrice(-change)}`)}
+          {change === 0
+            ? '0'
+            : change > 0
+            ? `↑${((change / (value - change)) * 100).toFixed(2)}% (${formatPrice(change)})`
+            : `↓${((-change / (value - change)) * 100).toFixed(2)}% (${formatPrice(-change)})`}
         </Text>
-      )}
-      {formatPrice(value) === "Loading..." ? <Text style={styles.loading_value}>{formatPrice(value)}</Text> : <Text style={styles.value}>{formatPrice(value)}</Text>}
+      ) : (
+        <Text
+          style={[
+            styles.change,
+            styles.noChange
+          ]}
+        >
+          ---
+        </Text>
+    )}
+      {formatPrice(value) === "Loading..." ? ( <Text style={styles.loading_value}>{formatPrice(value)}</Text> ) : (<Text style={[styles.value, { fontSize: formatPrice(value).length > 8 ? 22 : 25 }]}>{formatPrice(value)}</Text>
+    )}
+
       
     </View>
   );
@@ -462,10 +477,11 @@ const styles = StyleSheet.create({
   },
   nameSymbolContainer: {
     justifyContent: 'center',
+    width: "80%"
   },
   name: {
     color: '#bbb',
-    fontSize: 14,
+    fontSize: 11,
     fontWeight: 'bold',
   },
   symbol: {
@@ -485,8 +501,9 @@ const styles = StyleSheet.create({
     marginVertical: 5,
   },
   change: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: 'bold',
+    width : '99%'
   },
   break_line: {
     fontSize: 7,
