@@ -1,9 +1,16 @@
 import React, { useEffect, useState } from 'react';
+
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Image, Dimensions, ActivityIndicator } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { StatusBar } from 'expo-status-bar';
 // import * as Font from 'expo-font';
 // import { useFonts } from 'expo-font';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+
+
+
+
+
 
 export const currencyData = {
   usd: { flag: require('./assets/flags/us.png'), name: "US Dollar" },
@@ -107,14 +114,24 @@ const formatPrice = (price) => {
 
 const CurrencyApp = () => {
   
-
-  const [prices, setPrices] = useState({});
+  const [favorites, setFavorites] = useState(['USD', 'EUR', 'GBP', 'CHF', 'CAD', 'AUD']);
+  const [currency_prices, currency_setPrices] = useState({});
+  const [gold_prices, gold_setPrices] = useState({});
   const [activeTab, setActiveTab] = useState(0);
   const [amount, setAmount] = useState('');
   const [fromCurrency, setFromCurrency] = useState('usd');
   const [toCurrency, setToCurrency] = useState('eur');
   const [conversionResult, setConversionResult] = useState(null);
   const [resultAmount, setResultAmount] = useState('');
+
+  const toggleFavorite = (symbol) => {
+    setFavorites((prevFavorites) =>
+      prevFavorites.includes(symbol)
+        ? prevFavorites.filter((fav) => fav !== symbol) // Remove if already favorite
+        : [...prevFavorites, symbol] // Add if not already favorite
+    );
+    console.log(favorites)
+  };
 
   // const [fontsLoaded] = useFonts({
   //   'kir': require('./assets/fonts/SF-Pro.ttf'),
@@ -124,7 +141,7 @@ const CurrencyApp = () => {
     try {
       const response = await fetch('https://api.amirazade.ir/api/currency/');
       const data = await response.json();
-      setPrices({
+      currency_setPrices({
         usd: data.usd1,
         usd_change: data.usd3,
         eur: data.eur1,
@@ -179,7 +196,9 @@ const CurrencyApp = () => {
         omr_change: data.omr3,
         qar: data.qar1,
         qar_change: data.qar3,
+      });
 
+      gold_setPrices({
         emm: data.emami1,
         emm_change: data.emami13,
         azd: data.azadi1,
@@ -202,23 +221,24 @@ const CurrencyApp = () => {
   };
 
   useEffect(() => {
-  
     fetchCurrPrice();
+    const intervalId = setInterval(fetchCurrPrice, 30000);
+    return () => clearInterval(intervalId);
   }, []);
 
   const handleConvert = () => {
-    if (!prices[fromCurrency] || !prices[toCurrency]) return;
-    const fromRate = parseFloat(prices[fromCurrency]);
-    const toRate = parseFloat(prices[toCurrency]);
+    if (!currency_prices[fromCurrency] || !currency_prices[toCurrency]) return;
+    const fromRate = parseFloat(currency_prices[fromCurrency]);
+    const toRate = parseFloat(currency_prices[toCurrency]);
     const result = (parseFloat(amount) * fromRate) / toRate;
     setResultAmount(result.toFixed(2));
   };
 
   const handleResultChange = (newResult) => {
     setResultAmount(newResult);
-    if (prices[fromCurrency] && prices[toCurrency]) {
-      const fromRate = parseFloat(prices[fromCurrency]);
-      const toRate = parseFloat(prices[toCurrency]);
+    if (currency_prices[fromCurrency] && currency_prices[toCurrency]) {
+      const fromRate = parseFloat(currency_prices[fromCurrency]);
+      const toRate = parseFloat(currency_prices[toCurrency]);
       const originalAmount = (parseFloat(newResult) * toRate) / fromRate;
       setAmount(originalAmount.toFixed(2));
     }
@@ -229,18 +249,37 @@ const CurrencyApp = () => {
       case 0:
         return (
           <>
-            <CurrencyCard symbol="USD" prices = {prices} />
-            <CurrencyCard symbol="EUR" prices = {prices} />
-            <CurrencyCard symbol="GBP" prices = {prices} />
-            <CurrencyCard symbol="CHF" prices = {prices} />
-            <CurrencyCard symbol="CAD" prices = {prices} />
-            <CurrencyCard symbol="AUD" prices = {prices} />
+            {favorites.length === 0 ? (
+              <Text style={styles.noFavorites}>No favorites selected.</Text>
+            ) : (
+              favorites.map((symbol) => (
+                <CurrencyCard
+                  key={symbol}
+                  symbol={symbol}
+                  prices= {symbol.toLowerCase()  in currency_prices? currency_prices : gold_prices}
+                  isFavorite={true}
+                  onToggleFavorite={toggleFavorite}
+                />
+                
+              ))
+            )}
           </>
         );
       case 1:
         return (
           <>
-            <CurrencyCard symbol="USD" prices={prices} />
+          {Object.keys(currency_prices)
+              .filter((key) => !key.includes('_change')) // Exclude "_change" keys
+              .map((symbol) => (
+                <CurrencyCard
+                  key={symbol}
+                  symbol={symbol.toUpperCase()}
+                  prices={currency_prices}
+                  isFavorite={favorites.includes(symbol.toUpperCase())}
+                  onToggleFavorite={toggleFavorite}
+                />
+              ))}
+            {/* <CurrencyCard symbol="USD" prices={prices} />
             <CurrencyCard symbol="EUR" prices={prices} />
             <CurrencyCard symbol="GBP" prices={prices} />
             <CurrencyCard symbol="CHF" prices={prices} />
@@ -266,13 +305,24 @@ const CurrencyApp = () => {
             <CurrencyCard symbol="KWD" prices={prices} />
             <CurrencyCard symbol="BHD" prices={prices} />
             <CurrencyCard symbol="OMR" prices={prices} />
-            <CurrencyCard symbol="QAR" prices={prices} />
+            <CurrencyCard symbol="QAR" prices={prices} /> */}
           </>
         );
       case 2:
         return (
           <>
-            <CurrencyCard symbol="EMM" prices={prices}/>
+          {Object.keys(gold_prices)
+            .filter((key) => !key.includes('_change')) // Exclude "_change" keys
+            .map((symbol) => (
+              <CurrencyCard
+                key={symbol}
+                symbol={symbol.toUpperCase()}
+                prices={gold_prices}
+                isFavorite={favorites.includes(symbol.toUpperCase())}
+                onToggleFavorite={toggleFavorite}
+              />
+            ))}
+            {/* <CurrencyCard symbol="EMM" prices={prices}/>
             <CurrencyCard symbol="AZD" prices={prices}/>
             <CurrencyCard symbol="NIM" prices={prices}/>
             <CurrencyCard symbol="ROB" prices={prices}/>
@@ -280,7 +330,7 @@ const CurrencyApp = () => {
             
             <CurrencyCard symbol="GRM" prices={prices}/>
             <CurrencyCard symbol="OZ" prices={prices}/>
-            <CurrencyCard symbol="MQL" prices={prices}/>
+            <CurrencyCard symbol="MQL" prices={prices}/> */}
           </>
         );
 
@@ -295,7 +345,7 @@ const CurrencyApp = () => {
                 onValueChange={(itemValue) => setFromCurrency(itemValue)}
                 style={styles.picker}
               >
-                {Object.keys(prices).map((key) => (
+                {Object.keys(currency_prices).map((key) => (
                   <Picker.Item key={key} label={key.toUpperCase()} value={key} />
                 ))}
               </Picker>
@@ -315,7 +365,7 @@ const CurrencyApp = () => {
                 onValueChange={(itemValue) => setToCurrency(itemValue)}
                 style={styles.picker}
               >
-                {Object.keys(prices).map((key) => (
+                {Object.keys(currency_prices).map((key) => (
                   <Picker.Item key={key} label={key.toUpperCase()} value={key} />
                 ))}
               </Picker>
@@ -361,9 +411,10 @@ const CurrencyApp = () => {
   );
 };
 
-const CurrencyCard = ({ symbol, prices }) => {
-  const value = (prices[symbol.toLowerCase()]);
-  const change = (prices[`${symbol.toLowerCase()}_change`]);
+const CurrencyCard = ({ symbol, prices, isFavorite, onToggleFavorite }) => {
+  const value = prices[symbol.toLowerCase()];
+  const change = prices[`${symbol.toLowerCase()}_change`];
+
   return (
     <View style={styles.card}>
       <View style={styles.flagContainer}>
@@ -372,13 +423,17 @@ const CurrencyCard = ({ symbol, prices }) => {
           <Text style={styles.name}>{currencyData[symbol.toLowerCase()].name}</Text>
           <Text style={styles.symbol}>{symbol}</Text>
         </View>
-      </View>
-      {/* <Image source={currencyData[symbol.toLowerCase()].flag} style={styles.flag} /> */}
-      {/* <Text style={styles.name}>{currencyData[symbol.toLowerCase()].name}</Text> */}
-      {/* <Text style={styles.symbol}>{symbol}</Text> */}
 
+        <TouchableOpacity onPress={() => onToggleFavorite(symbol)} style={styles.favoriteIcon}>
+          <Icon
+            name={isFavorite ? 'radio-button-unchecked' : 'radio-button-unchecked'}
+            size={45}
+            color={isFavorite ? 'gold' : 'gray'}
+          />
+        </TouchableOpacity>
+      </View>
       <Text style={[ styles.break_line ]} > {"\n"} </Text>
-      
+
       {!isNaN(change) ? (
         <Text
           style={[
@@ -405,11 +460,10 @@ const CurrencyCard = ({ symbol, prices }) => {
       {formatPrice(value) === "Loading..." ? ( <Text style={styles.loading_value}>{formatPrice(value)}</Text> ) : (<Text style={[styles.value, { fontSize: formatPrice(value).length > 8 ? 22 : 25 }]}>{formatPrice(value)}</Text>
     )}
 
-      
     </View>
   );
 };
-
+ 
 const screenWidth = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
@@ -569,7 +623,11 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     height: 55,
   },
-   
+  favoriteIcon: {
+    position: 'absolute',
+    // top: 0,
+    left: -7.6,
+  },
 
 });
 
