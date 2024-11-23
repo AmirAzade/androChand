@@ -7,10 +7,12 @@ import { StatusBar } from 'expo-status-bar';
 // import { useFonts } from 'expo-font';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
+import { Ionicons } from '@expo/vector-icons'; 
 
+import { I18nManager } from 'react-native';
 
-
-
+I18nManager.allowRTL(false);
+I18nManager.forceRTL(false);
 
 export const currencyData = {
   usd: { flag: require('./assets/flags/us.png'), name: "US Dollar" },
@@ -103,7 +105,7 @@ const formatPrice = (price) => {
       console.log('Invalid price:', price);
       return 'Invalid Price';
     }
-    return number.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+    return number.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 });
   } catch (error) {
     console.error('Error formatting price:', error);
     return 'Error Formatting';
@@ -117,10 +119,11 @@ const CurrencyApp = () => {
   const [favorites, setFavorites] = useState(['USD', 'EUR', 'GBP', 'CHF', 'CAD', 'AUD']);
   const [currency_prices, currency_setPrices] = useState({});
   const [gold_prices, gold_setPrices] = useState({});
+  const [convert_prices, convert_setPrices] = useState({});
   const [activeTab, setActiveTab] = useState(0);
   const [amount, setAmount] = useState('');
   const [fromCurrency, setFromCurrency] = useState('usd');
-  const [toCurrency, setToCurrency] = useState('eur');
+  const [toCurrency, setToCurrency] = useState('irr');
   const [conversionResult, setConversionResult] = useState(null);
   const [resultAmount, setResultAmount] = useState('');
 
@@ -215,6 +218,48 @@ const CurrencyApp = () => {
         oz: data.ounce
       });
 
+      convert_setPrices({
+        irr : 1,
+        usd: data.usd1,
+        eur: data.eur1,
+        gbp: data.gbp1,
+        chf: data.chf1,
+        cad: data.cad1,
+        aud: data.aud1,
+        sek: data.sek1,
+        nok: data.nok1,
+        rub: data.rub1,
+        thb: data.thb1,
+        sgd: data.sgd1,
+        hkd: data.hkd1,
+        azn: data.azn1,
+        amd: data.amd1,
+        dkk: data.dkk1,
+        aed: data.aed1,
+        jpy: data.jpy1,
+        try: data.try1,
+        cny: data.cny1,
+        sar: data.sar1,
+        inr: data.inr1,
+        myr: data.myr1,
+        afn: data.afn1,
+        kwd: data.kwd1,
+        bhd: data.bhd1,
+        omr: data.omr1,
+        qar: data.qar1,
+
+
+        emm: data.emami1,
+        azd: data.azadi1,
+        nim: data.azadi1_2,
+        rob: data.azadi1_4,
+        grmi: data.azadi1g,
+
+        grm: data.gol18,
+        mql: data.mithqal,
+        oz: data.ounce
+      });
+
     } catch (error) {
       console.error('Error fetching currency prices:', error);
     }
@@ -226,21 +271,53 @@ const CurrencyApp = () => {
     return () => clearInterval(intervalId);
   }, []);
 
-  const handleConvert = () => {
-    if (!currency_prices[fromCurrency] || !currency_prices[toCurrency]) return;
-    const fromRate = parseFloat(currency_prices[fromCurrency]);
-    const toRate = parseFloat(currency_prices[toCurrency]);
-    const result = (parseFloat(amount) * fromRate) / toRate;
-    setResultAmount(result.toFixed(2));
+  useEffect(() => {
+    // Automatically trigger conversion when either currency picker changes
+    if (amount) {
+      handleConvert(amount);
+    }
+  }, [fromCurrency, toCurrency]);
+
+  const handleConvert = (newResult1) => {
+    newResult1 = newResult1.replace(/,/g, "");
+
+    if(isNaN(newResult1) || !newResult1) {
+      newResult1 = "";
+      setAmount((newResult1));
+      setResultAmount("")
+    }
+    else{
+      setAmount(formatPrice(newResult1));
+    }
+
+    if (convert_prices[fromCurrency] && convert_prices[toCurrency] && !isNaN(newResult1) && newResult1)
+    {
+      const fromRate = parseFloat(convert_prices[fromCurrency]);
+      const toRate = parseFloat(convert_prices[toCurrency]);
+      const result = (parseFloat(newResult1) * fromRate) / toRate;
+
+      setResultAmount(formatPrice(result.toFixed(2)));
+    }
   };
 
-  const handleResultChange = (newResult) => {
-    setResultAmount(newResult);
-    if (currency_prices[fromCurrency] && currency_prices[toCurrency]) {
-      const fromRate = parseFloat(currency_prices[fromCurrency]);
-      const toRate = parseFloat(currency_prices[toCurrency]);
-      const originalAmount = (parseFloat(newResult) * toRate) / fromRate;
-      setAmount(originalAmount.toFixed(2));
+  const handleResultChange = (newResult2) => {
+    newResult2 = newResult2.replace(/,/g, "");
+    if(isNaN(newResult2) || !newResult2) {
+      newResult2 = "";
+      setResultAmount((newResult2));
+      setAmount("");
+    }
+    else{
+      setResultAmount(formatPrice(newResult2));
+    }
+
+    
+    if (convert_prices[fromCurrency] && convert_prices[toCurrency] && !isNaN(newResult2) && newResult2)
+    {
+      const fromRate = parseFloat(convert_prices[fromCurrency]);
+      const toRate = parseFloat(convert_prices[toCurrency]);
+      const originalAmount = (parseFloat(newResult2) * toRate) / fromRate;
+      setAmount(formatPrice(originalAmount.toFixed(2)));
     }
   };
 
@@ -340,46 +417,67 @@ const CurrencyApp = () => {
           <View style={styles.convertorContainer}>
             <Text style={styles.label}>Amount:</Text>
             <View style={styles.row}>
-              <Picker
-                selectedValue={fromCurrency}
-                onValueChange={(itemValue) => setFromCurrency(itemValue)}
-                style={styles.picker}
-              >
-                {Object.keys(currency_prices).map((key) => (
-                  <Picker.Item key={key} label={key.toUpperCase()} value={key} />
-                ))}
-              </Picker>
-              <TextInput
-                style={styles.input}
-                keyboardType="numeric"
-                placeholder="Enter amount"
-                value={amount}
-                onChangeText={(text) => setAmount(text)}
-              />
+              <View style={styles.inputGroup}>
+                <View style={styles.picker}>
+                  <Picker
+                    selectedValue={fromCurrency}
+                    onValueChange={(itemValue) => {
+                      setFromCurrency(itemValue);
+                      {console.log("fromCurrency: ", fromCurrency)}
+                      handleConvert(amount); // Update TextInput based on currency change
+                    }}
+                    style={{ color: "#dedede" }}
+                  >
+                    {Object.keys(convert_prices).map((key) => (
+                      <Picker.Item key={key} label={key.toUpperCase()} value={key} />
+                    ))}
+                  </Picker>
+                </View>
+                <TextInput
+                  style={styles.input}
+                  keyboardType="numeric"
+                  placeholder="Enter amount"
+                  placeholderTextColor= "#c9c9c9"
+                  value={amount}
+                  onChangeText={handleConvert}
+                />
+              </View>
             </View>
-            
+
+            <View style={styles.iconContainer}>
+              <Ionicons name="swap-vertical" size={32} color="white" />
+            </View>
+
             <Text style={styles.label}>Converted Amount:</Text>
             <View style={styles.row}>
-              <Picker
-                selectedValue={toCurrency}
-                onValueChange={(itemValue) => setToCurrency(itemValue)}
-                style={styles.picker}
-              >
-                {Object.keys(currency_prices).map((key) => (
-                  <Picker.Item key={key} label={key.toUpperCase()} value={key} />
-                ))}
-              </Picker>
-              <TextInput
-                style={styles.input}
-                keyboardType="numeric"
-                value={resultAmount}
-                onChangeText={handleResultChange}
-              />
+              <View style={styles.inputGroup}>
+                <View style={styles.picker}>
+                  <Picker
+                    selectedValue={toCurrency}
+                    onValueChange={(itemValue) => {
+                      setToCurrency(itemValue);
+                      {console.log("toCurrency: ", toCurrency)}
+                      handleConvert(amount); // Update TextInput based on currency change
+                    }}
+                    style={{ color: "#dedede" }}
+                  >
+                    {Object.keys(convert_prices).map((key) => (
+                      <Picker.Item key={key} label={key.toUpperCase()} value={key} />
+                    ))}
+                  </Picker>
+                </View>
+                <TextInput
+                  style={styles.input}
+                  keyboardType="numeric"
+                  placeholder="Converted Amount"
+                  placeholderTextColor= "#c9c9c9"
+                  value={resultAmount}
+                  onChangeText={handleResultChange}
+                />
+              </View>
             </View>
-            <TouchableOpacity style={styles.convertButton} onPress={handleConvert}>
-              <Text style={styles.buttonText}>Convert</Text>
-            </TouchableOpacity>
           </View>
+
         );
       default:
         return null;
@@ -442,7 +540,7 @@ const CurrencyCard = ({ symbol, prices, isFavorite, onToggleFavorite }) => {
           ]}
         >
           {change == 0
-            ? '0% (0)'
+            ? ' 0% (0)'
             : change > 0
             ? `↑${((change / (value - change)) * 100).toFixed(2)}% (${formatPrice(change)})`
             : `↓${((-change / (value - change)) * 100).toFixed(2)}% (${formatPrice(-change)})`}
@@ -457,7 +555,7 @@ const CurrencyCard = ({ symbol, prices, isFavorite, onToggleFavorite }) => {
           ---
         </Text>
     )}
-      {formatPrice(value) === "Loading..." ? ( <Text style={styles.loading_value}>{formatPrice(value)}</Text> ) : (<Text style={[styles.value, { fontSize: formatPrice(value).length > 8 ? 22 : 25 }]}>{formatPrice(value)}</Text>
+      {formatPrice(value) === "Loading..." ? ( <Text style={styles.loading_value}>{formatPrice(value)}</Text> ) : (<Text style={[styles.value, { fontSize: formatPrice(value).length > 8 ? 22 : 25 }]}>{formatPrice(value) + (symbol.toLowerCase() === 'oz'? ' $' : '')}</Text>
     )}
 
     </View>
@@ -572,12 +670,6 @@ const styles = StyleSheet.create({
     color: '#bfbfbf',
   },
   
-  label: {
-    color: '#fff',
-    fontSize: 16,
-    marginVertical: 10,
-  },
-  
   convertButton: {
     backgroundColor: '#4caf50',
     padding: 10,
@@ -596,37 +688,53 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   convertorContainer: {
-    padding: 20,
-    width:"100%",
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
+    flex: 1,
+    padding: 16,
   },
   label: {
-    color: '#fff',
     fontSize: 16,
-    marginVertical: 10,
+    color: "#fff",
+    marginBottom: 8,
+  },
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  inputGroup: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: 8,
+    padding: 8,
+    backgroundColor: "#0000",
+    borderWidth: 1,
+    borderColor: "#828282",
   },
   picker: {
-    flex: 17,
-    backgroundColor: '#fff',
-    marginRight: 10,
+    flex: 1,
+    marginRight: 8,
+    backgroundColor: "#393b3a",
+    color: '#dedede',
     borderRadius: 5,
-    height: 40,
+
+
   },
   input: {
-    flex: 23,
-    backgroundColor: '#fff',
-    padding: 10,
-    borderRadius: 5,
-    height: 55,
+    flex: 1,
+    height: 40,
+    borderWidth: 0, // Input border is managed by inputGroup
+    color: "#fff",
   },
   favoriteIcon: {
     position: 'absolute',
     // top: 0,
     left: -7.6,
+  },
+
+  iconContainer: {
+    alignItems: "center", // Horizontally center the icon
+    marginVertical: 8,   // Add space between input groups
   },
 
 });
