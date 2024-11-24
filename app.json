@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "androChand",
+    "name": "Chande",
     "slug": "androChand",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -19,7 +19,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#000000"
       },
-      "package": "com.amirmoaz26.androChand",
+      "package": "com.androChand.Chande",
       
       "permissions": ["INTERNET"],
       "config": {

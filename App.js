@@ -133,7 +133,6 @@ const CurrencyApp = () => {
         ? prevFavorites.filter((fav) => fav !== symbol) // Remove if already favorite
         : [...prevFavorites, symbol] // Add if not already favorite
     );
-    console.log(favorites)
   };
 
   // const [fontsLoaded] = useFonts({
@@ -423,7 +422,6 @@ const CurrencyApp = () => {
                     selectedValue={fromCurrency}
                     onValueChange={(itemValue) => {
                       setFromCurrency(itemValue);
-                      {console.log("fromCurrency: ", fromCurrency)}
                       handleConvert(amount); // Update TextInput based on currency change
                     }}
                     style={{ color: "#dedede" }}
@@ -456,7 +454,6 @@ const CurrencyApp = () => {
                     selectedValue={toCurrency}
                     onValueChange={(itemValue) => {
                       setToCurrency(itemValue);
-                      {console.log("toCurrency: ", toCurrency)}
                       handleConvert(amount); // Update TextInput based on currency change
                     }}
                     style={{ color: "#dedede" }}
