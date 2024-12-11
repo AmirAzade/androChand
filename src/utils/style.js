@@ -196,6 +196,7 @@ const styles = StyleSheet.create({
         alignItems: "center", // Horizontally center the icon
         marginVertical: 8,   // Add space between input groups
       },
+      
 });
 
 export default styles;

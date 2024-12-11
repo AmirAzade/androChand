@@ -8,7 +8,7 @@ import { I18nManager } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { WebView } from 'react-native-webview';
 
-
+import SystemNavigationBar from 'react-native-system-navigation-bar';
 // import * as Font from 'expo-font';
 // import { useFonts } from 'expo-font';
 
@@ -20,9 +20,11 @@ import { currencyData } from './src/constants/currencyData';
 import { fetchCurrPrice } from './src/components/api';
 import styles from './src/utils/style';
 
+SystemNavigationBar.setBarMode('dark');
+SystemNavigationBar.setNavigationColor('black');
 
 const CurrencyApp = () => {
-  
+
   const [favorites, setFavorites] = useState(['USD', 'EUR', 'GBP', 'AZD', 'NIM', 'GRM']);
   const [shirini, setShirini] = useState(null);
   const [currency_prices, currency_setPrices] = useState({});
@@ -303,6 +305,7 @@ const CurrencyApp = () => {
       <ScrollView contentContainerStyle={styles.grid}>
         {renderTabContent()}
       </ScrollView>
+
     </View>
   );
 };
