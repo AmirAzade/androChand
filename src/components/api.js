@@ -1,0 +1,125 @@
+export const fetchCurrPrice = async (currency_setPrices, gold_setPrices, convert_setPrices, setShirini) => {
+    try {
+      const response = await fetch('https://api.chande.top/api/currency/');
+      const data = await response.json();
+      setShirini(data.shirini);
+      currency_setPrices({
+        usd: data.usd1,
+        usd_change: data.usd3,
+        eur: data.eur1,
+        eur_change: data.eur3,
+        gbp: data.gbp1,
+        gbp_change: data.gbp3,
+        chf: data.chf1,
+        chf_change: data.chf3,
+        cad: data.cad1,
+        cad_change: data.cad3,
+        aud: data.aud1,
+        aud_change: data.aud3,
+        sek: data.sek1,
+        sek_change: data.sek3,
+        nok: data.nok1,
+        nok_change: data.nok3,
+        rub: data.rub1,
+        rub_change: data.rub3,
+        thb: data.thb1,
+        thb_change: data.thb3,
+        sgd: data.sgd1,
+        sgd_change: data.sgd3,
+        hkd: data.hkd1,
+        hkd_change: data.hkd3,
+        azn: data.azn1,
+        azn_change: data.azn3,
+        amd: data.amd1,
+        amd_change: data.amd3,
+        dkk: data.dkk1,
+        dkk_change: data.dkk3,
+        aed: data.aed1,
+        aed_change: data.aed3,
+        jpy: data.jpy1,
+        jpy_change: data.jpy3,
+        try: data.try1,
+        try_change: data.try3,
+        cny: data.cny1,
+        cny_change: data.cny3,
+        sar: data.sar1,
+        sar_change: data.sar3,
+        inr: data.inr1,
+        inr_change: data.inr3,
+        myr: data.myr1,
+        myr_change: data.myr3,
+        afn: data.afn1,
+        afn_change: data.afn3,
+        kwd: data.kwd1,
+        kwd_change: data.kwd3,
+        bhd: data.bhd1,
+        bhd_change: data.bhd3,
+        omr: data.omr1,
+        omr_change: data.omr3,
+        qar: data.qar1,
+        qar_change: data.qar3,
+      });
+
+      gold_setPrices({
+        emm: data.emami1,
+        emm_change: data.emami13,
+        azd: data.azadi1,
+        azd_change: data.azadi13,
+        nim: data.azadi1_2,
+        nim_change: data.azadi1_23,
+        rob: data.azadi1_4,
+        rob_change: data.azadi1_43,
+        grmi: data.azadi1g,
+        grmi_change: data.azadi1g3,
+
+        grm: data.gol18,
+        mql: data.mithqal,
+        oz: data.ounce
+      });
+
+      convert_setPrices({
+        irr : 1,
+        usd: data.usd1,
+        eur: data.eur1,
+        gbp: data.gbp1,
+        chf: data.chf1,
+        cad: data.cad1,
+        aud: data.aud1,
+        sek: data.sek1,
+        nok: data.nok1,
+        rub: data.rub1,
+        thb: data.thb1,
+        sgd: data.sgd1,
+        hkd: data.hkd1,
+        azn: data.azn1,
+        amd: data.amd1,
+        dkk: data.dkk1,
+        aed: data.aed1,
+        jpy: data.jpy1,
+        try: data.try1,
+        cny: data.cny1,
+        sar: data.sar1,
+        inr: data.inr1,
+        myr: data.myr1,
+        afn: data.afn1,
+        kwd: data.kwd1,
+        bhd: data.bhd1,
+        omr: data.omr1,
+        qar: data.qar1,
+
+
+        emm: data.emami1,
+        azd: data.azadi1,
+        nim: data.azadi1_2,
+        rob: data.azadi1_4,
+        grmi: data.azadi1g,
+
+        grm: data.gol18,
+        mql: data.mithqal,
+        oz: data.ounce
+      });
+
+    } catch (error) {
+      console.error('Error fetching currency prices:', error);
+    }
+  };
