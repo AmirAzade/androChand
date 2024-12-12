@@ -23,6 +23,7 @@ export const currencyData = {
   myr: { flag: require('../../assets/flags/my.png'), name: "Malaysian Ringgit" },
   afn: { flag: require('../../assets/flags/af.png'), name: "Afghan Afghani" },
   kwd: { flag: require('../../assets/flags/kw.png'), name: "Kuwaiti Dinar" },
+  iqd: { flag: require('../../assets/flags/iq.png'), name: "Iraqi Dinar" },
   bhd: { flag: require('../../assets/flags/bh.png'), name: "Bahraini Dinar" },
   omr: { flag: require('../../assets/flags/om.png'), name: "Omani Rial" },
   qar: { flag: require('../../assets/flags/qa.png'), name: "Qatari Riyal" },

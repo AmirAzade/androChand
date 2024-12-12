@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Image, Dimensions, ActivityIndicator, Appearance } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableWithoutFeedback, TouchableOpacity, Animated, Modal, TextInput, Image, Dimensions, ActivityIndicator, Appearance } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { StatusBar } from 'expo-status-bar';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -7,6 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { I18nManager } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { WebView } from 'react-native-webview';
+import { LineChart } from 'react-native-chart-kit';
 
 import SystemNavigationBar from 'react-native-system-navigation-bar';
 // import * as Font from 'expo-font';
@@ -15,6 +16,20 @@ import SystemNavigationBar from 'react-native-system-navigation-bar';
 I18nManager.allowRTL(false);
 I18nManager.forceRTL(false);
 
+function getWeekdaySymbolsUntilToday() {
+  const weekdaySymbols = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  
+  const todayIndex = new Date().getDay(); // 0 (Sunday) to 6 (Saturday)
+  const nextDayIndex = (todayIndex + 1) % 7;
+  const rotatedSymbols = weekdaySymbols.slice(nextDayIndex).concat(weekdaySymbols.slice(0, nextDayIndex));
+  
+  rotatedSymbols.push(weekdaySymbols[todayIndex]);
+  
+  return rotatedSymbols;
+}
+
+
+
 import { formatPrice } from './src/utils/formatPrice';
 import { currencyData } from './src/constants/currencyData';
 import { fetchCurrPrice } from './src/components/api';
@@ -22,6 +37,9 @@ import styles from './src/utils/style';
 
 SystemNavigationBar.setBarMode('dark');
 SystemNavigationBar.setNavigationColor('black');
+
+const { height } = Dimensions.get('window'); 
+const { width } = Dimensions.get('window');
 
 const CurrencyApp = () => {
 
@@ -168,7 +186,7 @@ const CurrencyApp = () => {
         return (
           <>
           {Object.keys(currency_prices)
-          .filter((key) => !key.includes('_change'))
+          .filter((key) => !key.includes('_change') && !key.includes('_history'))
           .map((symbol, index) => (
             <React.Fragment key={`currency-${symbol}`}>
               <CurrencyCard
@@ -189,7 +207,7 @@ const CurrencyApp = () => {
         return (
           <>
           {Object.keys(gold_prices)
-          .filter((key) => !key.includes('_change'))
+          .filter((key) => !key.includes('_change') && !key.includes('_history'))
           .map((symbol, index) => (
             <React.Fragment key={`gold-${symbol}`}>
               <CurrencyCard
@@ -310,12 +328,61 @@ const CurrencyApp = () => {
   );
 };
 
+
 const CurrencyCard = ({ symbol, prices, isFavorite, onToggleFavorite }) => {
   const value = prices[symbol.toLowerCase()];
   const change = prices[`${symbol.toLowerCase()}_change`];
+  const history = prices[`${symbol.toLowerCase()}_history`];
+  const help = prices;
+
+  const chartConfig = {
+    backgroundGradientFrom: '#303030',
+    backgroundGradientTo: '#303030',
+    decimalPlaces: 0,  // Number of decimal places
+    color: (opacity = 0) => {
+      return history[0] > value
+        ? `rgba(255, 30, 0, ${opacity})` // Red for negative change
+        : `rgba(30, 255, 0, ${opacity})`; // Green for positive change
+    },
+    style: {
+      borderRadius: 16,
+    },
+  };
+
+  const data = {
+    labels: getWeekdaySymbolsUntilToday(),  // X-axis labels
+    datasets: [
+      {
+        data: [...history, value],  // Data points for the line
+        strokeWidth: 2,  // Line thickness
+      },
+    ],
+  };
+
+  const [modalVisible, setModalVisible] = useState(false);
+  const [slideAnim] = useState(new Animated.Value(height)); // Initial position is off-screen
+
+  const showModal = () => {
+    setModalVisible(true);
+    Animated.timing(slideAnim, {
+      toValue: 0, // Slide to 1/3 of the screen height
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const hideModal = () => {
+    Animated.timing(slideAnim, {
+      toValue: height, // Slide back off the screen
+      duration: 300,
+      useNativeDriver: true,
+    }).start(() => setModalVisible(false));
+  };
 
   return (
     <View style={styles.card}>
+    <TouchableOpacity onPress={showModal}>
+
       <View style={styles.flagContainer}>
         <Image source={currencyData[symbol.toLowerCase()].flag} style={styles.flag} />
         <View style={styles.nameSymbolContainer}>
@@ -358,10 +425,69 @@ const CurrencyCard = ({ symbol, prices, isFavorite, onToggleFavorite }) => {
     )}
       {formatPrice(value) === "Loading..." ? ( <Text style={styles.loading_value}>{formatPrice(value)}</Text> ) : (<Text style={[styles.value, { fontSize: formatPrice(value).length > 8 ? 22 : 25 }]}>{formatPrice(value) + (symbol.toLowerCase() === 'oz'? ' $' : '')}</Text>
     )}
+    </TouchableOpacity>
+
+    {/* Modal */}
+    <Modal
+      animationType="none"
+      transparent={true}
+      visible={modalVisible}
+      onRequestClose={hideModal}>
+      
+      <TouchableWithoutFeedback onPress={hideModal}>
+        <Animated.View style={[styles.modalContainer, { transform: [{ translateY: slideAnim }] }]}>
+          <View style={styles.modalContent}>
+            <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
+              <View style={styles.flagAndTextContainer}>
+                <View style={styles.flagContainer}>
+                  <Image source={currencyData[symbol.toLowerCase()].flag} style={styles.flag2} />
+                  <View style={styles.nameSymbolContainer}>
+                    <Text style={styles.name2}>{currencyData[symbol.toLowerCase()].name}</Text>
+                    <Text style={styles.symbol}>{symbol}</Text>
+                  </View>
+                </View>
+
+                {formatPrice(value) === "Loading..." ? (
+                  <Text style={styles.rightText}>{formatPrice(value)}</Text>
+                ) : (
+                  <Text
+                    style={[
+                      styles.rightText,
+                      { fontSize: formatPrice(value).length > 8 ? 19 : 27 },
+                    ]}
+                  >
+                    {formatPrice(value) + (symbol.toLowerCase() === 'oz' ? ' $' : '')}
+                  </Text>
+                )}
+              </View>
+              {(symbol == 'AZD' || symbol == 'EMM' || symbol == 'NIM' || symbol == 'ROB' || symbol == 'GRMI' || symbol == 'GRM' || symbol == 'MQL') ? (
+                <Text style={styles.cantShowText}>Can't show chart</Text>
+              ) : (
+                <LineChart
+                  data={data}
+                  width={width - 10} // Width of the chart
+                  height={height / 4}
+                  chartConfig={chartConfig}
+                  bezier // Smooth lines
+                  style={{
+                    marginVertical: 8,
+                    borderRadius: 16,
+                    flex: 1,
+                    justifyContent: 'flex-end',
+                  }}
+                />
+              )}
+            </View>
+          </View>
+        </Animated.View>
+      </TouchableWithoutFeedback>
+    </Modal>
+
 
     </View>
   );
 };
+
 
 const ShiriniCard = () => {
   const injectedScript = `
