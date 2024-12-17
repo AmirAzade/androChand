@@ -1,5 +1,7 @@
 export const formatPrice = (price, digit = 0) => {
-  if (!price) return 'Loading...';
+  if (!price) {
+    return 'Loading...';
+  }
   
   try {
     const number = parseFloat(price);

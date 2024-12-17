@@ -1,6 +1,6 @@
 export const fetchCurrPrice = async (currency_setPrices, gold_setPrices, convert_setPrices, setShirini) => {
   try {
-    const response = await fetch('http://192.168.43.226:8000/api/currency/');
+    const response = await fetch('https://api.chande.top/api/currency/');
     const data = await response.json();
     setShirini(false);
 

@@ -90,14 +90,11 @@ const CurrencyApp = () => {
   };
 
   useEffect(() => {
-
-    loadFavorites();
     fetchCurrPrice(currency_setPrices, gold_setPrices, convert_setPrices, setShirini);
-
+    loadFavorites();
     const intervalId = setInterval(() => {
       fetchCurrPrice(currency_setPrices, gold_setPrices, convert_setPrices, setShirini);
     }, 30000);
-    
     return () => clearInterval(intervalId);
   }, []);
 
@@ -159,32 +156,36 @@ const CurrencyApp = () => {
       case 0:
         return (
           <>
-    
-            {favorites.length === 0 ? (
-              <View style={styles.noFavoritesContainer}>
-                <Text style={styles.noFavorites}>No items in your favorites list{"\n"}Tap the flags to add to favorites</Text>
-              </View>
-            ) : (
-              favorites.map((symbol, index) => (
-                <React.Fragment key={`favorite-${symbol}`}>
-                  <CurrencyCard
-                    symbol={symbol}
-                    prices={symbol.toLowerCase() in currency_prices ? currency_prices : gold_prices}
-                    isFavorite={true}
-                    onToggleFavorite={toggleFavorite}
-                  />
-                  {(index + 1) % 6 === 0 && shirini === true && (
-                    <ShiriniCard key={`shiriniCard-${index}`} />
-                  )}
-                </React.Fragment>
-              ))              
-            )}
+          
+          {favorites.length === 0 || Object.keys(currency_prices).length == 0? (
+            <View style={styles.noFavoritesContainer}>
+              {/* {console.log("******************fuk you2", isNaN(currency_prices))} */}
+
+              <Text style={styles.noFavorites}>No items in your favorites list{"\n"}Tap the flags to add to favorites</Text>
+            </View>
+          ) : (
+            favorites.map((symbol, index) => (
+              <React.Fragment key={`favorite-${symbol}`}>
+                {/* {console.log("******************fuk you", symbol, currency_prices)} */}
+                <CurrencyCard
+                  symbol={symbol.toUpperCase()}
+                  prices={symbol.toLowerCase() in currency_prices ? currency_prices : gold_prices}
+                  isFavorite={true}
+                  onToggleFavorite={toggleFavorite}
+                />
+                {(index + 1) % 6 === 0 && shirini === true && (
+                  <ShiriniCard key={`shiriniCard-${index}`} />
+                )}
+              </React.Fragment>
+            ))              
+          )}
 
           </>
         );
       case 1:
         return (
           <>
+
           {Object.keys(currency_prices)
           .filter((key) => !key.includes('_change') && !key.includes('_history'))
           .map((symbol, index) => (
@@ -334,21 +335,22 @@ const CurrencyCard = ({ symbol, prices, isFavorite, onToggleFavorite }) => {
   const change = prices[`${symbol.toLowerCase()}_change`];
   const history = prices[`${symbol.toLowerCase()}_history`];
   const help = prices;
-
+  
   const chartConfig = {
     backgroundGradientFrom: '#303030',
     backgroundGradientTo: '#303030',
     decimalPlaces: 0,  // Number of decimal places
     color: (opacity = 0) => {
       return history[0] > value
-        ? `rgba(255, 30, 0, ${opacity})` // Red for negative change
-        : `rgba(30, 255, 0, ${opacity})`; // Green for positive change
+      ? `rgba(255, 30, 0, ${opacity})` // Red for negative change
+      : `rgba(30, 255, 0, ${opacity})`; // Green for positive change
     },
     style: {
       borderRadius: 16,
     },
   };
-
+  
+  
   const data = {
     labels: getWeekdaySymbolsUntilToday(),  // X-axis labels
     datasets: [
@@ -358,6 +360,7 @@ const CurrencyCard = ({ symbol, prices, isFavorite, onToggleFavorite }) => {
       },
     ],
   };
+
 
   const [modalVisible, setModalVisible] = useState(false);
   const [slideAnim] = useState(new Animated.Value(height)); // Initial position is off-screen
@@ -381,107 +384,135 @@ const CurrencyCard = ({ symbol, prices, isFavorite, onToggleFavorite }) => {
 
   return (
     <View style={styles.card}>
-    <TouchableOpacity onPress={showModal}>
 
-      <View style={styles.flagContainer}>
-        <Image source={currencyData[symbol.toLowerCase()].flag} style={styles.flag} />
-        <View style={styles.nameSymbolContainer}>
-          <Text style={styles.name}>{currencyData[symbol.toLowerCase()].name}</Text>
-          <Text style={styles.symbol}>{symbol}</Text>
-        </View>
-
-        <TouchableOpacity onPress={() => onToggleFavorite(symbol)} style={styles.favoriteIcon}>
-          <Icon
-            name={isFavorite ? 'radio-button-unchecked' : 'radio-button-unchecked'}
-            size={45}
-            color={isFavorite ? 'gold' : 'gray'}
-          />
-        </TouchableOpacity>
-      </View>
-      <Text style={[ styles.break_line ]} > {"\n"} </Text>
-
-      {!isNaN(change) ? (
-        <Text
-          style={[
-            styles.change,
-            change == 0 ? styles.noChange : change > 0 ? styles.positive : styles.negative
-          ]}
-        >
-          {change == 0
-            ? ' 0% (0)'
-            : change > 0
-            ? `↑${((change / (value - change)) * 100).toFixed(2)}% (${formatPrice(change)})`
-            : `↓${((-change / (value - change)) * 100).toFixed(2)}% (${formatPrice(-change)})`}
-        </Text>
-      ) : (
-        <Text
-          style={[
-            styles.change,
-            styles.noChange
-          ]}
-        >
-          ---
-        </Text>
-    )}
-      {formatPrice(value) === "Loading..." ? ( <Text style={styles.loading_value}>{formatPrice(value)}</Text> ) : (<Text style={[styles.value, { fontSize: formatPrice(value).length > 8 ? 22 : 25 }]}>{formatPrice(value) + (symbol.toLowerCase() === 'oz'? ' $' : '')}</Text>
-    )}
-    </TouchableOpacity>
-
-    {/* Modal */}
-    <Modal
-      animationType="none"
-      transparent={true}
-      visible={modalVisible}
-      onRequestClose={hideModal}>
-      
-      <TouchableWithoutFeedback onPress={hideModal}>
-        <Animated.View style={[styles.modalContainer, { transform: [{ translateY: slideAnim }] }]}>
-          <View style={styles.modalContent}>
-            <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
-              <View style={styles.flagAndTextContainer}>
-                <View style={styles.flagContainer}>
-                  <Image source={currencyData[symbol.toLowerCase()].flag} style={styles.flag2} />
-                  <View style={styles.nameSymbolContainer}>
-                    <Text style={styles.name2}>{currencyData[symbol.toLowerCase()].name}</Text>
-                    <Text style={styles.symbol}>{symbol}</Text>
-                  </View>
-                </View>
-
-                {formatPrice(value) === "Loading..." ? (
-                  <Text style={styles.rightText}>{formatPrice(value)}</Text>
-                ) : (
-                  <Text
-                    style={[
-                      styles.rightText,
-                      { fontSize: formatPrice(value).length > 8 ? 19 : 27 },
-                    ]}
-                  >
-                    {formatPrice(value) + (symbol.toLowerCase() === 'oz' ? ' $' : '')}
-                  </Text>
-                )}
-              </View>
-              {(symbol == 'AZD' || symbol == 'EMM' || symbol == 'NIM' || symbol == 'ROB' || symbol == 'GRMI' || symbol == 'GRM' || symbol == 'MQL') ? (
-                <Text style={styles.cantShowText}>Can't show chart</Text>
-              ) : (
-                <LineChart
-                  data={data}
-                  width={width - 10} // Width of the chart
-                  height={height / 4}
-                  chartConfig={chartConfig}
-                  bezier // Smooth lines
-                  style={{
-                    marginVertical: 8,
-                    borderRadius: 16,
-                    flex: 1,
-                    justifyContent: 'flex-end',
-                  }}
-                />
-              )}
-            </View>
+      <TouchableOpacity onPress={showModal}>
+        <View style={styles.flagContainer}>
+          <Image source={currencyData[symbol.toLowerCase()].flag} style={styles.flag} />
+          <View style={styles.nameSymbolContainer}>
+            <Text style={styles.name}>{currencyData[symbol.toLowerCase()].name}</Text>
+            <Text style={styles.symbol}>{symbol}</Text>
           </View>
-        </Animated.View>
-      </TouchableWithoutFeedback>
-    </Modal>
+
+          <TouchableOpacity onPress={() => onToggleFavorite(symbol)} style={styles.favoriteIcon}>
+            <Icon
+              name={isFavorite ? 'radio-button-unchecked' : 'radio-button-unchecked'}
+              size={45}
+              color={isFavorite ? 'gold' : 'gray'}
+              />
+          </TouchableOpacity>
+        </View>
+        <Text style={[ styles.break_line ]} > {"\n"} </Text>
+
+        {change != null ? (
+          <Text
+            style={[
+              styles.change,
+              change == 0 ? styles.noChange : change > 0 ? styles.positive : styles.negative
+            ]}
+          >
+            {change == 0
+              ? ' 0% (0)'
+              : change > 0
+              ? `↑${((change / (value - change)) * 100).toFixed(2)}% (${formatPrice(change)})`
+              : `↓${((-change / (value - change)) * 100).toFixed(2)}% (${formatPrice(-change)})`}
+          </Text>
+        ) : (
+          <Text
+            style={[
+              styles.change,
+              styles.noChange
+            ]}
+          >
+            ---
+          </Text>
+      )}
+        {formatPrice(value) === "Loading..." ? ( <Text style={styles.loading_value}>{formatPrice(value)}</Text> ) : (<Text style={[styles.value, { fontSize: formatPrice(value).length > 8 ? 22 : 25 }]}>{formatPrice(value) + (symbol.toLowerCase() === 'oz'? ' $' : '')}</Text>
+      )}
+
+      </TouchableOpacity>
+
+      {/* Modal */}
+      <Modal
+        animationType="none"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={hideModal}>
+        
+        <TouchableWithoutFeedback onPress={hideModal}>
+          <Animated.View style={[styles.modalContainer, { transform: [{ translateY: slideAnim }] }]}>
+
+            {(symbol == 'AZD' || symbol == 'EMM' || symbol == 'NIM' || symbol == 'ROB' || symbol == 'GRMI' || symbol == 'GRM' || symbol == 'MQL') ? (
+              <View style={styles.GoldModalContent}>
+                <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
+                  <View style={styles.flagAndTextContainer}>
+                    <View style={styles.flagContainer}>
+                      <Image source={currencyData[symbol.toLowerCase()].flag} style={styles.flag2} />
+                      <View style={styles.nameSymbolContainer}>
+                        <Text style={styles.name2}>{currencyData[symbol.toLowerCase()].name}</Text>
+                        <Text style={styles.symbol}>{symbol}</Text>
+                      </View>
+                    </View>
+
+                    {formatPrice(value) === "Loading..." ? (
+                      <Text style={styles.rightText}>{formatPrice(value)}</Text>
+                    ) : (
+                      <Text
+                        style={[
+                          styles.rightText,
+                          { fontSize: formatPrice(value).length > 8 ? 19 : 27 },
+                        ]}
+                      >
+                        {formatPrice(value) + (symbol.toLowerCase() === 'oz' ? ' $' : '')}
+                      </Text>
+                    )}
+                  </View>
+                    
+                </View>
+              </View>
+            ) : (
+              <View style={styles.modalContent}>
+                <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
+                  <View style={styles.flagAndTextContainer}>
+                    <View style={styles.flagContainer}>
+                      <Image source={currencyData[symbol.toLowerCase()].flag} style={styles.flag2} />
+                      <View style={styles.nameSymbolContainer}>
+                        <Text style={styles.name2}>{currencyData[symbol.toLowerCase()].name}</Text>
+                        <Text style={styles.symbol}>{symbol}</Text>
+                      </View>
+                    </View>
+
+                    {formatPrice(value) === "Loading..." ? (
+                      <Text style={styles.rightText}>{formatPrice(value)}</Text>
+                    ) : (
+                      <Text
+                        style={[
+                          styles.rightText,
+                          { fontSize: formatPrice(value).length > 8 ? 19 : 27 },
+                        ]}
+                      >
+                        {formatPrice(value) + (symbol.toLowerCase() === 'oz' ? ' $' : '')}
+                      </Text>
+                    )}
+                  </View>
+                    <LineChart
+                      data={data}
+                      width={width - 10} // Width of the chart
+                      height={height / 4}
+                      chartConfig={chartConfig}
+                      bezier // Smooth lines
+                      style={{
+                        marginVertical: 8,
+                        borderRadius: 16,
+                        flex: 1,
+                        justifyContent: 'flex-end',
+                      }}
+                    />
+                </View>
+              </View>
+            )}
+          </Animated.View>
+        </TouchableWithoutFeedback>
+      </Modal>
 
 
     </View>

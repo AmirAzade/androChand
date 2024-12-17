@@ -19,7 +19,17 @@ const styles = StyleSheet.create({
   modalContent: {
     backgroundColor: '#303030',
     width: '100%',
-    height: 4.2*height / 10,
+    height: 0.45*height,
+    padding: 20,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  GoldModalContent: {
+    backgroundColor: '#303030',
+    width: '100%',
+    height: 0.2*height,
     padding: 20,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
@@ -292,8 +302,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#393b3a",
     color: '#dedede',
     borderRadius: 5,
-
-
   },
   input: {
     flex: 1,
