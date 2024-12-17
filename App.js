@@ -441,7 +441,7 @@ const CurrencyCard = ({ symbol, prices, isFavorite, onToggleFavorite }) => {
         <TouchableWithoutFeedback onPress={hideModal}>
           <Animated.View style={[styles.modalContainer, { transform: [{ translateY: slideAnim }] }]}>
 
-            {(symbol == 'AZD' || symbol == 'EMM' || symbol == 'NIM' || symbol == 'ROB' || symbol == 'GRMI' || symbol == 'GRM' || symbol == 'MQL') ? (
+            {(symbol == 'AZD' || symbol == 'EMM' || symbol == 'NIM' || symbol == 'ROB' || symbol == 'GRMI' || symbol == 'GRM' || symbol == 'MQL' || symbol == 'OZ') ? (
               <View style={styles.GoldModalContent}>
                 <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
                   <View style={styles.flagAndTextContainer}>
