@@ -154,34 +154,38 @@ const CurrencyApp = () => {
   const renderTabContent = () => {
     switch (activeTab) {
       case 0:
+        if (!Object.keys(currency_prices).length || !Object.keys(gold_prices).length) {
+          return (
+            <View style={styles.noFavoritesContainer}>
+              <ActivityIndicator size="large" color="#999" />
+              <Text style={styles.noFavorites}>Loading favorites...</Text>
+            </View>
+          );
+        }
         return (
           <>
-          
-          {favorites.length === 0 || Object.keys(currency_prices).length == 0? (
-            <View style={styles.noFavoritesContainer}>
-              {/* {console.log("******************fuk you2", isNaN(currency_prices))} */}
-
-              <Text style={styles.noFavorites}>No items in your favorites list{"\n"}Tap the flags to add to favorites</Text>
-            </View>
-          ) : (
-            favorites.map((symbol, index) => (
-              <React.Fragment key={`favorite-${symbol}`}>
-                {/* {console.log("******************fuk you", symbol, currency_prices)} */}
-                <CurrencyCard
-                  symbol={symbol.toUpperCase()}
-                  prices={symbol.toLowerCase() in currency_prices ? currency_prices : gold_prices}
-                  isFavorite={true}
-                  onToggleFavorite={toggleFavorite}
-                />
-                {(index + 1) % 6 === 0 && shirini === true && (
-                  <ShiriniCard key={`shiriniCard-${index}`} />
-                )}
-              </React.Fragment>
-            ))              
-          )}
-
+            {favorites.length === 0 ? (
+              <View style={styles.noFavoritesContainer}>
+                <Text style={styles.noFavorites}>No items in your favorites list{"\n"}Tap the flags to add to favorites</Text>
+              </View>
+            ) : (
+              favorites.map((symbol, index) => (
+                <React.Fragment key={`favorite-${symbol}`}>
+                  <CurrencyCard
+                    symbol={symbol.toUpperCase()}
+                    prices={symbol.toLowerCase() in currency_prices ? currency_prices : gold_prices}
+                    isFavorite={true}
+                    onToggleFavorite={toggleFavorite}
+                  />
+                  {(index + 1) % 6 === 0 && shirini === true && (
+                    <ShiriniCard key={`shiriniCard-${index}`} />
+                  )}
+                </React.Fragment>
+              ))
+            )}
           </>
         );
+
       case 1:
         return (
           <>
