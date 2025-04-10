@@ -143,7 +143,7 @@ export const fetchCurrPrice = async (currency_setPrices, gold_setPrices, convert
 
     // Update state for conversion prices
     convert_setPrices({
-      irr: 1,
+      irt: 1,
       usd: currencyPrices.usd.buy,
       eur: currencyPrices.eur.buy,
       gbp: currencyPrices.gbp.buy,

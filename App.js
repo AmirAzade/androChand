@@ -16,12 +16,13 @@ import SystemNavigationBar from 'react-native-system-navigation-bar';
 I18nManager.allowRTL(false);
 I18nManager.forceRTL(false);
 
+
 function getWeekdaySymbolsUntilToday() {
   const weekdaySymbols = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   
   const todayIndex = new Date().getDay(); // 0 (Sunday) to 6 (Saturday)
   const nextDayIndex = (todayIndex + 1) % 7;
-  const rotatedSymbols = weekdaySymbols.slice(nextDayIndex).concat(weekdaySymbols.slice(0, nextDayIndex));
+  const rotatedSymbols = weekdaySymbols.slice(nextDayIndex).concat(weekdaySymbols.slice(0, nextDayIndex-1));
   
   rotatedSymbols.push(weekdaySymbols[todayIndex]);
   
@@ -51,7 +52,7 @@ const CurrencyApp = () => {
   const [activeTab, setActiveTab] = useState(0);
   const [amount, setAmount] = useState('');
   const [fromCurrency, setFromCurrency] = useState('usd');
-  const [toCurrency, setToCurrency] = useState('irr');
+  const [toCurrency, setToCurrency] = useState('irt');
   const [resultAmount, setResultAmount] = useState('');
 
   const colorScheme = Appearance.getColorScheme();
@@ -315,7 +316,7 @@ const CurrencyApp = () => {
       
       <Text style={styles.title}>Chande?!</Text>
       <View style={styles.tabBar}>
-        {['Favorites', 'Currency', 'Golds', 'Convertor'].map((tab, index) => (
+        {['Favorites', 'Currencies', 'Golds', 'Converter'].map((tab, index) => (
           <TouchableOpacity
             key={index}
             style={[styles.tabButton, activeTab === index && styles.activeTab]}
@@ -445,7 +446,7 @@ const CurrencyCard = ({ symbol, prices, isFavorite, onToggleFavorite }) => {
         <TouchableWithoutFeedback onPress={hideModal}>
           <Animated.View style={[styles.modalContainer, { transform: [{ translateY: slideAnim }] }]}>
 
-            {(symbol == 'AZD' || symbol == 'EMM' || symbol == 'NIM' || symbol == 'ROB' || symbol == 'GRMI' || symbol == 'GRM' || symbol == 'MQL' || symbol == 'OZ') ? (
+            {false ? (
               <View style={styles.GoldModalContent}>
                 <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
                   <View style={styles.flagAndTextContainer}>
